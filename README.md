@@ -19,9 +19,58 @@ Terdapat 4 service utama yang saling berkomunikasi:
 ```
 .
 ├── user-service/
+│   ├── controllers/
+│   │   └── userController.js
+│   ├── models/
+│   │   └── userModel.js
+│   ├── routes/
+│   │   └── userRoutes.js
+│   ├── config/
+│   │   └── db.js
+│   ├── app.js
+│   ├── package.json
+│   ├── .env
+│   └── .gitignore
 ├── menu-service/
+│   ├── controllers/
+│   │   └── menuController.js
+│   ├── models/
+│   │   └── menuModel.js
+│   ├── routes/
+│   │   └── menuRoutes.js
+│   ├── config/
+│   │   └── db.js
+│   ├── app.js
+│   ├── package.json
+│   ├── .env
+│   └── .gitignore
 ├── order-service/
-└── review-service/
+│   ├── controllers/
+│   │   └── orderController.js
+│   ├── models/
+│   │   └── orderModel.js
+│   ├── routes/
+│   │   └── orderRoutes.js
+│   ├── config/
+│   │   └── db.js
+│   ├── app.js
+│   ├── package.json
+│   ├── .env
+│   └── .gitignore
+├── review-service/
+│   ├── controllers/
+│   │   └── reviewController.js
+│   ├── models/
+│   │   └── reviewModel.js
+│   ├── routes/
+│   │   └── reviewRoutes.js
+│   ├── config/
+│   │   └── db.js
+│   ├── app.js
+│   ├── package.json
+│   ├── .env
+│   └── .gitignore
+└── README.md
 ```
 
 ---
