@@ -101,9 +101,27 @@ Lakukan hal yang sama untuk:
 
 ---
 
+### Berikut adalah contoh penambahan **tutorial di README** untuk mengimpor file `Z-UTS-EAI.postman_collection.json` agar mempermudah proses testing menggunakan Postman:
+
+Untuk mempermudah pengujian API, kamu bisa menggunakan file koleksi Postman yang telah disiapkan.
+
+### 📥 Cara Import Koleksi Postman
+
+1. **Buka aplikasi [Postman](https://www.postman.com/)**.
+2. Klik menu **"Import"** di pojok kiri atas.
+3. Pilih tab **"File"** lalu klik **"Upload Files"**.
+4. Cari dan pilih file:  
+   `Z-UTS-EAI.postman_collection.json`
+5. Klik **"Open"** untuk mengimpor.
+
+### ✅ Setelah Diimpor
+
+- Koleksi bernama **Z-UTS-EAI** akan muncul di sidebar.
+- Kamu bisa langsung menjalankan request yang tersedia untuk melakukan testing endpoint API yang telah dibuat.
+
+---
+
 ## Penjelasan Masing-Masing Service
-
-
 
 ## 📘 User Service API Documentation
 
