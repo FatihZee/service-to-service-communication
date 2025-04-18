@@ -1,9 +1,7 @@
-<p align="center">
-  <h1 style="font-weight: bold; text-align: center;">UTS EAI - Service to Service Communication</h1>
-  <div style="text-align: center; margin-top: 10px;">
-    <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWpod2FscDljYmxyN2p2dWF1czU5aTh6dXdwOGt0Z2lrYXV3NmowZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l4EoR2uvw5dVeCNZC/giphy.gif" alt="Coding Enthusiasm" height="200"/>
-  </div>
-</p>
+<div align="center">
+  <h1>UTS EAI - Service to Service Communication</h1>
+  <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWpod2FscDljYmxyN2p2dWF1czU5aTh6dXdwOGt0Z2lrYXV3NmowZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l4EoR2uvw5dVeCNZC/giphy.gif" alt="Coding Enthusiasm" height="200"/>
+</div>
 
 Proyek ini merupakan implementasi sistem komunikasi antar service (**Service-to-Service Communication**) dalam konteks Ujian Tengah Semester (UTS) mata kuliah **Enterprise Application Integration (EAI)**.
 
@@ -33,8 +31,8 @@ Terdapat 4 service utama yang saling berkomunikasi:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/username/uts-eai-service-communication.git
-cd uts-eai-service-communication
+git clone https://github.com/FatihZee/service-to-service-communication.git
+cd service-to-service-communication
 ```
 
 ### 2. Jalankan Tiap Service
@@ -56,10 +54,7 @@ Lakukan hal yang sama untuk:
 
 ## Penjelasan Masing-Masing Service
 
-### 🧑‍💼 User Service
-Berikut dokumentasi lengkap untuk route `user-service` berdasarkan kode Express yang kamu berikan. Formatnya cocok untuk ditaruh di file `README.md` atau dokumentasi Postman:
 
----
 
 ## 📘 User Service API Documentation
 
