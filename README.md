@@ -210,7 +210,9 @@ CREATE TABLE `reviews` (
 
 Setelah selesai membuat semua tabel di masing-masing database, kamu bisa lanjut menjalankan aplikasinya sesuai petunjuk dari tiap service.
 
-### Berikut adalah contoh penambahan **tutorial di README** untuk mengimpor file `Z-UTS-EAI.postman_collection.json` agar mempermudah proses testing menggunakan Postman:
+---
+
+### Berikut adalah **TUTORIAL** untuk mengimpor file `Z-UTS-EAI.postman_collection.json` agar mempermudah proses testing menggunakan Postman:
 
 Untuk mempermudah pengujian API, kamu bisa menggunakan file koleksi Postman yang telah disiapkan.
 
