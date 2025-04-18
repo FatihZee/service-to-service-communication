@@ -101,6 +101,115 @@ Lakukan hal yang sama untuk:
 
 ---
 
+# 🍽 EAI Microservices SQL Setup
+
+Sebelum menjalankan aplikasi, **pastikan kamu sudah membuat database dan tabelnya terlebih dahulu.**  
+Setiap microservice menggunakan database yang berbeda dengan format nama:
+
+```
+eai_<nama_service>
+```
+
+Contoh:
+- `eai_user_service`
+- `eai_menu_service`
+- `eai_order_service`
+- `eai_review_service`
+
+---
+
+## 🔧 Langkah Setup
+
+### 1. Buat Database
+
+Masuk ke MySQL dan jalankan perintah berikut:
+
+```sql
+CREATE DATABASE eai_user_service;
+CREATE DATABASE eai_menu_service;
+CREATE DATABASE eai_order_service;
+CREATE DATABASE eai_review_service;
+```
+
+### 2. Masuk ke Masing-Masing Database dan Buat Tabel
+
+#### 🧑 User Service (`eai_user_service`)
+
+```sql
+USE eai_user_service;
+
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+```
+
+#### 📋 Menu Service (`eai_menu_service`)
+
+```sql
+USE eai_menu_service;
+
+CREATE TABLE `menus` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `description` text,
+  `price` decimal(10,2) NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+```
+
+#### 🧾 Order Service (`eai_order_service`)
+
+```sql
+USE eai_order_service;
+
+CREATE TABLE `orders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `menu_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  `total_price` decimal(10,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+```
+
+#### ⭐ Review Service (`eai_review_service`)
+
+```sql
+USE eai_review_service;
+
+CREATE TABLE `reviews` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `menu_id` int NOT NULL,
+  `order_id` int NOT NULL,
+  `rating` int NOT NULL,
+  `comment` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `menu_id` (`menu_id`),
+  KEY `order_id` (`order_id`),
+  CONSTRAINT `reviews_chk_1` CHECK ((`rating` between 1 and 5))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+```
+
+---
+
+Setelah selesai membuat semua tabel di masing-masing database, kamu bisa lanjut menjalankan aplikasinya sesuai petunjuk dari tiap service.
+
 ### Berikut adalah contoh penambahan **tutorial di README** untuk mengimpor file `Z-UTS-EAI.postman_collection.json` agar mempermudah proses testing menggunakan Postman:
 
 Untuk mempermudah pengujian API, kamu bisa menggunakan file koleksi Postman yang telah disiapkan.
