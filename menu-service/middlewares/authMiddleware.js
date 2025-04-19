@@ -18,5 +18,3 @@ module.exports = (req, res, next) => {
     res.status(401).json({ error: 'Invalid token' });
   }
 };
-
-console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'exists' : 'missing');

@@ -66,30 +66,36 @@ Terdapat 4 service utama yang saling berkomunikasi:
 │   │   └── reviewRoutes.js
 │   ├── config/
 │   │   └── db.js
+│   ├── helpers/
+│   │   └── sentimentAnalyzer.js
 │   ├── app.js
 │   ├── package.json
 │   ├── .env
 │   └── .gitignore
+├── package.json
+├── package-lock.json
 └── README.md
 ```
 
 ---
 
-## Cara Menjalankan
+## 🚀 Cara Menjalankan
 
-### 1. Clone Repository
+### 🔹 **Langkah Awal: Clone Repository**
 
-```bash
+```powershell
 git clone https://github.com/FatihZee/service-to-service-communication.git
 cd service-to-service-communication
 ```
 
-### 2. Jalankan Tiap Service
+---
 
-Masuk ke folder masing-masing service lalu jalankan:
+### 🔹 **Opsi 1: Jalankan Tiap Service Secara Manual**
 
-```bash
-cd user-service
+Masuk ke masing-masing folder service, install dependencies, dan jalankan:
+
+```powershell
+cd .\user-service\
 npm install
 npm run dev
 ```
@@ -98,6 +104,37 @@ Lakukan hal yang sama untuk:
 - `menu-service`
 - `order-service`
 - `review-service`
+
+---
+
+### 🔹 **Opsi 2: Jalankan Semua Service Sekaligus (Direkomendasikan)**
+
+Install dulu dependency utama (di root) untuk menjalankan semua service sekaligus:
+
+```powershell
+npm install
+```
+
+> ⚠️ Pastikan sebelumnya sudah install dependencies untuk masing-masing service:
+
+```powershell
+cd .\user-service\; npm install
+cd ..\menu-service\; npm install
+cd ..\order-service\; npm install
+cd ..\review-service\; npm install
+cd ..
+```
+
+Setelah itu, cukup jalankan:
+
+```powershell
+npm run dev
+```
+
+Perintah ini akan secara otomatis:
+- Masuk ke tiap folder service
+- Menjalankan `npm run dev` di masing-masing service
+- Semua berjalan paralel menggunakan package `concurrently`
 
 ---
 
@@ -208,31 +245,39 @@ CREATE TABLE `reviews` (
 
 ---
 
-Setelah selesai membuat semua tabel di masing-masing database, kamu bisa lanjut menjalankan aplikasinya sesuai petunjuk dari tiap service.
+### 📥 Cara Import Koleksi dan Environment Postman
 
----
+Untuk mempermudah pengujian API, kamu bisa menggunakan file koleksi dan environment Postman yang telah disiapkan.
 
-### Berikut adalah **TUTORIAL** untuk mengimpor file `Z-UTS-EAI.postman_collection.json` agar mempermudah proses testing menggunakan Postman:
-
-Untuk mempermudah pengujian API, kamu bisa menggunakan file koleksi Postman yang telah disiapkan.
-
-### 📥 Cara Import Koleksi Postman
+#### ✅ Import Koleksi Request: `Z-UTS-EAI.postman_collection.json`
 
 1. **Buka aplikasi [Postman](https://www.postman.com/)**.
-2. Klik menu **"Import"** di pojok kiri atas.
-3. Pilih tab **"File"** lalu klik **"Upload Files"**.
-4. Cari dan pilih file:  
-   `Z-UTS-EAI.postman_collection.json`
+2. Klik tombol **"Import"** di pojok kiri atas.
+3. Pilih tab **"File"**, lalu klik **"Upload Files"**.
+4. Pilih file berikut:
+   - `Z-UTS-EAI.postman_collection.json`
 5. Klik **"Open"** untuk mengimpor.
 
-### ✅ Setelah Diimpor
+Setelah berhasil, koleksi bernama **Z-UTS-EAI** akan muncul di sidebar kiri.
 
-- Koleksi bernama **Z-UTS-EAI** akan muncul di sidebar.
-- Kamu bisa langsung menjalankan request yang tersedia untuk melakukan testing endpoint API yang telah dibuat.
+#### ✅ Import Environment: `UTS-EAI.postman_environment.json`
+
+1. Ulangi langkah **Import**, lalu pilih file:
+   - `UTS-EAI.postman_environment.json`
+2. Setelah diimpor, klik icon gear ⚙️ di kanan atas (Manage Environments).
+3. Pilih environment **UTS-EAI**, lalu klik **"Set Active"**.
 
 ---
 
-## Penjelasan Masing-Masing Service
+### 🛡️ Catatan tentang Environment
+
+Environment ini berisi **variabel `token`** yang digunakan untuk menyimpan JWT token hasil login. Token ini akan secara otomatis dimasukkan ke header `Authorization` saat mengakses endpoint yang membutuhkan autentikasi.  
+
+Jadi kamu hanya perlu login satu kali, lalu token-nya bisa digunakan untuk request lain secara otomatis tanpa perlu tempel ulang manual.
+
+---
+
+# Penjelasan Masing-Masing Service
 
 ## 📘 User Service API Documentation
 
@@ -1147,18 +1192,236 @@ Authorization: Bearer <token>
 }
 ```
 
+
 ---
 
-## Komunikasi Antar Service
+### GET `/menus/:menuId/reviews/sentiment/:sentiment`
 
-Semua service berkomunikasi via HTTP REST API. Contoh:
+**Deskripsi:**  
+Mengambil daftar review berdasarkan `menuId` dan `sentiment` tertentu (misalnya positif, negatif, atau netral).
 
-- Order Service akan:
-  - Memanggil User Service untuk cek `user_id`
-  - Memanggil Menu Service untuk cek `menu_id`
-- Review Service akan:
-  - Ambil info dari User dan Menu Service sebelum simpan review
-- Dan lain-lain
+**Params:**
+- `menuId` – ID menu (integer)
+- `sentiment` – Sentimen review (`positive`, `negative`, `neutral`)
+
+**Response:**
+```json
+{
+    "menuId": "3",
+    "sentiment": "negative",
+    "reviewCount": 1,
+    "reviews": [
+        {
+            "id": 5,
+            "user_id": 2,
+            "menu_id": 3,
+            "order_id": 4,
+            "rating": 1,
+            "comment": "The food was awful, it was cold, tasteless, and the portion size was ridiculously small. I won't be coming back here again!",
+            "sentiment": "negative",
+            "created_at": "2025-04-18T18:32:18.000Z",
+            "updated_at": "2025-04-18T18:32:18.000Z",
+            "user": {
+                "id": 2,
+                "name": "Fatih Fikry Oktavianto",
+                "email": "fatih@example.com",
+                "phone": "085713309551",
+                "created_at": "2025-04-18T11:10:51.000Z",
+                "updated_at": "2025-04-18T11:10:51.000Z"
+            }
+        }
+    ]
+}
+```
+
+---
+
+### GET `/menus/:menuId/sentiment-stats`
+
+**Deskripsi:**  
+Mengambil statistik jumlah review berdasarkan sentimen untuk sebuah menu.
+
+**Params:**
+- `menuId` – ID menu (integer)
+
+**Response:**
+```json
+{
+    "menuId": "3",
+    "sentimentStats": {
+        "positive": 1,
+        "negative": 1,
+        "neutral": 1,
+        "total": 5,
+        "null": 2,
+        "positivePercentage": 20,
+        "negativePercentage": 20,
+        "neutralPercentage": 20
+    }
+}
+```
+
+---
+
+### 📦 `sentimentAnalyzer.js`
+
+**Deskripsi:**  
+Modul ini menggunakan _Natural Language Processing (NLP)_ dengan pustaka `node-nlp` untuk menganalisis sentimen review makanan dalam bahasa Indonesia. Fungsinya mendeteksi apakah suatu review bernada **positif**, **netral**, atau **negatif**.
+
+Modul ini merupakan bentuk pemanfaatan **Tren AI** dalam pengolahan bahasa alami (_Natural Language Understanding_) sebagai inovasi untuk meningkatkan fitur analisis data secara otomatis.
+
+---
+
+### 🔍 Fungsi Utama
+
+#### `initializeSentimentAnalyzer()`
+
+**Deskripsi:**  
+Melatih model NLP berdasarkan kumpulan contoh kalimat yang dikategorikan sebagai positif, netral, atau negatif. Fungsi ini perlu dipanggil **sebelum pemrosesan pertama** jika model belum terinisialisasi.
+
+**Return:**  
+- `manager` (instance dari `NlpManager` yang telah terlatih)
+
+---
+
+#### `analyzeSentiment(text)`
+
+**Deskripsi:**  
+Menganalisis sentimen dari teks review dan mengembalikan label sentimen (`positive`, `neutral`, `negative`).  
+Jika confidence dari model NLP rendah, maka sistem akan menggunakan pendekatan **analisis berbasis keyword** sebagai fallback untuk hasil yang lebih akurat.
+
+**Params:**
+- `text` (string): Kalimat atau paragraf review dari pengguna
+
+**Return:**
+- `sentimentLabel` (string): Label sentimen (`positive`, `neutral`, `negative`)
+
+---
+
+### 💡 Nilai Tambah & Inovasi
+
+- ✅ Menggunakan model NLP berbasis AI untuk memahami bahasa alami
+- ✅ Review baru dapat diklasifikasikan secara otomatis **tanpa perlu dilabeli satu per satu**
+- ✅ Adaptif terhadap review dalam bahasa Indonesia
+- ✅ Memperkaya fitur analisis seperti statistik sentimen per menu
+- ✅ Dapat dikembangkan lebih lanjut dengan pelatihan tambahan atau integrasi model eksternal
+
+---
+
+### 🧪 Contoh Penggunaan
+
+```js
+const { analyzeSentiment } = require('./helpers/sentimentAnalyzer');
+
+(async () => {
+  const result = await analyzeSentiment('Makanannya enak banget, recommended!');
+  console.log(result); // Output: "positive"
+})();
+```
+
+---
+
+## 📡 **Dokumentasi Komunikasi Antar Layanan (Implementasi)**
+
+Semua layanan dalam sistem ini berkomunikasi menggunakan **HTTP REST API** untuk melakukan pertukaran data antar layanan yang berbeda. Setiap layanan memiliki endpoint tertentu yang dipanggil oleh layanan lain sesuai dengan kebutuhan fungsionalitasnya.
+
+### **Diagram Komunikasi Antar Service**
+Komunikasi antar service diatur sedemikian rupa untuk memenuhi fungsionalitas yang dibutuhkan oleh tiap-tiap modul. Berikut adalah beberapa contoh bagaimana layanan berkomunikasi:
+
+1. **Order Service** akan:
+   - Memanggil **User Service** untuk mengecek validitas `user_id`.
+   - Memanggil **Menu Service** untuk mengecek keberadaan dan detail dari `menu_id`.
+
+2. **Review Service** akan:
+   - Mengambil informasi dari **User Service** dan **Menu Service** sebelum menyimpan review baru untuk memastikan informasi terkait `user_id` dan `menu_id` valid.
+
+3. **Layanan lainnya** juga berinteraksi serupa untuk memastikan data yang digunakan oleh setiap layanan selalu terkini dan akurat.
+
+---
+
+### **Rincian API dan Komunikasi Layanan**
+
+#### 1. **User Service**
+- **`getUserWithOrdersAndReviews` (Controller `user`)**
+  - **Deskripsi:** Mengambil informasi pengguna beserta pesanan dan review terkait.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3001/users/${userId}` – Mendapatkan detail pengguna.
+    - `GET http://localhost:3003/orders/user/${userId}` – Mendapatkan pesanan oleh pengguna.
+    - `GET http://localhost:3002/menus/${order.menu_id}` – Mendapatkan detail menu dari pesanan.
+    - `GET http://localhost:3004/reviews?menuId=${order.menu_id}` – Mendapatkan review berdasarkan `menu_id` dari pesanan.
+
+#### 2. **Menu Service**
+- **`getAllMenus` (Controller `menu`)**
+  - **Deskripsi:** Mengambil semua menu yang ada beserta detail pesanan terkait.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3003/orders/menu/${menu.id}` – Mendapatkan pesanan berdasarkan `menu_id`.
+  
+- **`createMenu` (Controller `menu`)**
+  - **Deskripsi:** Membuat menu baru, dan memverifikasi pengguna yang membuat menu.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3001/users/${userId}` – Mendapatkan detail pengguna yang membuat menu baru.
+
+#### 3. **Order Service**
+- **`createOrder` (Controller `order`)**
+  - **Deskripsi:** Membuat pesanan baru dan memverifikasi pengguna serta menu yang dipilih.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3001/users/${userId}` – Memverifikasi pengguna yang membuat pesanan.
+    - `GET http://localhost:3002/menus/${menuId}` – Memverifikasi menu yang dipesan.
+
+- **`updateOrder` (Controller `order`)**
+  - **Deskripsi:** Memperbarui pesanan dan memverifikasi pengguna serta menu yang dipilih.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3001/users/${userId}` – Memverifikasi pengguna yang mengubah pesanan.
+    - `GET http://localhost:3002/menus/${menuId}` – Memverifikasi menu yang dipesan.
+
+#### 4. **Review Service**
+- **`getAllReviews` (Controller `review`)**
+  - **Deskripsi:** Mengambil semua review beserta informasi pengguna dan menu terkait.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3001/users/${review.user_id}` – Mendapatkan detail pengguna dari review.
+    - `GET http://localhost:3002/menus/${review.menu_id}` – Mendapatkan detail menu dari review.
+
+- **`getReviewById` (Controller `review`)**
+  - **Deskripsi:** Mengambil review berdasarkan `review_id` dan memastikan data pengguna serta pesanan terkait.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3001/users/${review.user_id}` – Mendapatkan detail pengguna.
+    - `GET http://localhost:3002/menus/${review.menu_id}` – Mendapatkan detail menu.
+    - `GET http://localhost:3003/orders/${review.order_id}` – Mendapatkan detail pesanan yang terkait.
+
+- **`createReview` (Controller `review`)**
+  - **Deskripsi:** Membuat review baru berdasarkan pesanan dan menu yang ada.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3003/orders/${orderId}` – Mendapatkan detail pesanan.
+    - `GET http://localhost:3002/menus/${order.menu_id}` – Mendapatkan detail menu dari pesanan.
+
+- **`updateReview` (Controller `review`)**
+  - **Deskripsi:** Memperbarui review yang telah ada.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3003/orders/${review.order_id}` – Mendapatkan detail pesanan terkait review yang diubah.
+
+- **`getReviewsByUserId` (Controller `review`)**
+  - **Deskripsi:** Mengambil semua review yang dibuat oleh pengguna berdasarkan `user_id`.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3001/users/${userId}` – Mendapatkan detail pengguna.
+    - `GET http://localhost:3002/menus/${review.menu_id}` – Mendapatkan detail menu yang di-review.
+
+- **`getReviewsByMenuId` (Controller `review`)**
+  - **Deskripsi:** Mengambil semua review berdasarkan `menu_id`.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3002/menus/${menuId}` – Mendapatkan detail menu.
+    - `GET http://localhost:3001/users/${review.user_id}` – Mendapatkan detail pengguna dari review.
+
+- **`getReviewsByMenuIdAndSentiment` (Controller `review`)**
+  - **Deskripsi:** Mengambil review berdasarkan `menu_id` dan sentimen tertentu.
+  - **Endpoint yang Digunakan:**
+    - `GET http://localhost:3001/users/${review.user_id}` – Mendapatkan detail pengguna.
+
+---
+
+### **Kesimpulan**
+Dokumentasi ini menggambarkan bagaimana setiap layanan dalam sistem berkomunikasi untuk memastikan data yang diperlukan oleh satu layanan dapat diakses oleh layanan lainnya. Komunikasi antar layanan menggunakan HTTP REST API dengan standar URL yang konsisten agar mudah dipahami dan diimplementasikan.
+
+Dengan pendekatan ini, kita memastikan bahwa **data antar layanan tetap konsisten**, dan **setiap layanan dapat saling berinteraksi dengan efisien**. Ini juga mendukung skalabilitas, sehingga sistem dapat berkembang dan diintegrasikan dengan layanan lain di masa depan.
 
 ---
 
@@ -1173,12 +1436,14 @@ Semua service berkomunikasi via HTTP REST API. Contoh:
 
 ---
 
-## Teknologi yang Digunakan
+## 🚀 **Teknologi yang Digunakan**
 
-- Node.js / Express
-- JSON format
-- Bcrypt
-- Jsonwebtoken
+- **Node.js & Express**: Platform dan framework untuk pengembangan aplikasi backend dengan JavaScript.
+- **JSON Format**: Format data untuk komunikasi antar server dan klien.
+- **Bcrypt**: Untuk mengenkripsi dan memvalidasi password pengguna.
+- **JWT (JSON Web Token)**: Untuk otentikasi dan otorisasi pengguna.
+- **Node-NLP**: Pustaka untuk pengolahan bahasa alami, seperti analisis sentimen.
+- **Sentiment Analysis**: Untuk menganalisis sentimen positif, negatif, atau netral dari teks ulasan.
 
 ---
 

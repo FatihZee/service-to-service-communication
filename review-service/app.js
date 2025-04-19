@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Review Service running on port ${PORT}`);
+  console.log(`ReviewService running on port http://localhost:${PORT}`);
 });
 
 module.exports = app;
