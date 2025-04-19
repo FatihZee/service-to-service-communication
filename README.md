@@ -1,9 +1,9 @@
 <div align="center">
-  <h1>UTS EAI - Service to Service Communication</h1>
+  <h1>Service to Service Communication</h1>
   <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWpod2FscDljYmxyN2p2dWF1czU5aTh6dXdwOGt0Z2lrYXV3NmowZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l4EoR2uvw5dVeCNZC/giphy.gif" alt="Coding Enthusiasm" height="200"/>
 </div>
 
-Proyek ini merupakan implementasi sistem komunikasi antar service (**Service-to-Service Communication**) dalam konteks Ujian Tengah Semester (UTS) mata kuliah **Enterprise Application Integration (EAI)**.
+Proyek ini merupakan implementasi sistem komunikasi antar service (**Service-to-Service Communication**)
 
 Terdapat 4 service utama yang saling berkomunikasi:
 
@@ -1444,13 +1444,3 @@ Dengan pendekatan ini, kita memastikan bahwa **data antar layanan tetap konsiste
 - **JWT (JSON Web Token)**: Untuk otentikasi dan otorisasi pengguna.
 - **Node-NLP**: Pustaka untuk pengolahan bahasa alami, seperti analisis sentimen.
 - **Sentiment Analysis**: Untuk menganalisis sentimen positif, negatif, atau netral dari teks ulasan.
-
----
-
-## Author
-
-UTS EAI - Team 2
-- Fatih Fikry Oktavianto
-- Viriya Sandi Moggallana Wijaya
-- Siti Aqila Ghaisani Akmal
-- Dhivi Cagardimika Sumardiyono
