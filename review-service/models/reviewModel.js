@@ -47,6 +47,22 @@ const Review = {
       [menuId],
       callback
     );
+  },
+
+  getByMenuIdAndSentiment: (menuId, sentimentType, callback) => {
+    db.query(
+      'SELECT * FROM reviews WHERE menu_id = ? AND sentiment = ?',
+      [menuId, sentimentType],
+      callback
+    );
+  },
+
+  getSentimentCountByMenuId: (menuId, callback) => {
+    db.query(
+      'SELECT sentiment, COUNT(*) as count FROM reviews WHERE menu_id = ? GROUP BY sentiment',
+      [menuId],
+      callback
+    );
   }
 };
 

@@ -16,8 +16,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "google-translate-api-x": "^10.7.2",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.14.0"
+    "mysql2": "^3.14.0",
+    "node-nlp": "^5.0.0-alpha.5",
+    "sentiment": "^5.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

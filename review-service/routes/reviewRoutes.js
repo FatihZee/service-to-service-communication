@@ -13,4 +13,7 @@ router.post('/', authMiddleware, reviewController.createReview);
 router.put('/:id', authMiddleware, reviewController.updateReview);
 router.delete('/:id', authMiddleware, reviewController.deleteReview);
 
+router.get('/menus/:menuId/reviews/sentiment/:sentiment', reviewController.getReviewsByMenuIdAndSentiment);
+router.get('/menus/:menuId/sentiment-stats', reviewController.getSentimentStatsByMenuId);
+
 module.exports = router;
