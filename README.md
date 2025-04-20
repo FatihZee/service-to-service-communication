@@ -233,6 +233,7 @@ CREATE TABLE `reviews` (
   `order_id` int NOT NULL,
   `rating` int NOT NULL,
   `comment` text,
+  `sentiment` VARCHAR(50),
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
