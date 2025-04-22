@@ -152,7 +152,6 @@
       opacity: 1;
     }
     
-    /* Custom star rating input */
     .rating-input {
       direction: rtl;
       display: inline-block;
@@ -175,7 +174,6 @@
       color: var(--primary-color);
     }
     
-    /* Animation */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -272,12 +270,10 @@
   
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Auth check
       const token = localStorage.getItem("token");
       const user = JSON.parse(localStorage.getItem("user"));
       if (!token) window.location.href = "index.html";
   
-      // DOM elements
       const reviewList = document.getElementById("reviewList");
       const reviewForm = document.getElementById("reviewForm");
       const orderSelect = document.getElementById("orderSelect");
@@ -285,7 +281,6 @@
       const ratingInput = document.querySelector('.rating-input');
       const ratingHidden = document.getElementById('rating');
 
-      // Set up star rating input
       ratingInput.addEventListener('click', function(e) {
         if (e.target.tagName === 'INPUT') {
           ratingHidden.value = e.target.value;
@@ -348,7 +343,7 @@
                   </div>
                 </div>
               `).join('');
-            }, 500); // Simulate loading for smooth animation
+            }, 500);
           } else {
             reviewList.innerHTML = `
               <div class="col-12">
@@ -432,7 +427,6 @@
           });
   
           if (res.ok) {
-            // Create custom toast notification
             const toast = document.createElement('div');
             toast.className = 'position-fixed bottom-0 end-0 p-3';
             toast.style.zIndex = '5';
@@ -482,7 +476,6 @@
         document.getElementById("rating").value = rating;
         document.getElementById("comment").value = comment;
         
-        // Update star rating visual
         document.querySelector(`#star${rating}`).checked = true;
         
         document.getElementById("reviewModalLabel").innerHTML = '<i class="fas fa-edit me-2"></i>Edit Review';
@@ -493,7 +486,6 @@
        * Delete a review
        */
       window.deleteReview = async function(id) {
-        // Create a more attractive confirm dialog
         const confirmDialog = document.createElement('div');
         confirmDialog.className = 'modal fade';
         confirmDialog.id = 'confirmDeleteModal';
@@ -531,7 +523,6 @@
             });
             
             if (res.ok) {
-              // Create custom toast notification
               const toast = document.createElement('div');
               toast.className = 'position-fixed bottom-0 end-0 p-3';
               toast.style.zIndex = '5';
@@ -563,7 +554,6 @@
             console.error("Error deleting review:", error);
             alert("Network error while deleting review. Please try again.");
           } finally {
-            // Remove confirm dialog from DOM
             setTimeout(() => {
               document.getElementById('confirmDeleteModal').remove();
             }, 300);

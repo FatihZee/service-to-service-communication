@@ -1,6 +1,5 @@
 const axios = require('axios');
 const Order = require('../models/orderModel');
-const jwt = require('jsonwebtoken');
 
 module.exports = {
   getAllOrders: (req, res) => {

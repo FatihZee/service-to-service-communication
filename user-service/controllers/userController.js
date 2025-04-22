@@ -108,7 +108,6 @@ module.exports = {
     const token = req.headers.authorization;
   
     try {
-      // Ambil data user
       const userRes = await axios.get(`http://localhost:3001/users/${userId}`, {
         headers: { Authorization: token }
       });
@@ -118,15 +117,12 @@ module.exports = {
         return res.status(404).json({ message: 'User not found' });
       }
   
-      // Ambil semua order user
       const orderRes = await axios.get(`http://localhost:3003/orders/user/${userId}`, {
         headers: { Authorization: token }
       });
       const orders = orderRes.data;
   
-      // Loop order dan ambil menu + review yang sesuai
       const ordersWithDetails = await Promise.all(orders.map(async (order) => {
-        // Ambil menu berdasarkan menu_id dari order
         let menu;
         try {
           const menuRes = await axios.get(`http://localhost:3002/menus/${order.menu_id}`, {
@@ -138,7 +134,6 @@ module.exports = {
           menu = { id: order.menu_id, name: 'Unknown Menu' };
         }
   
-        // Ambil review berdasarkan order_id
         let reviews = [];
         let reviewCount = 0;
         try {
@@ -165,7 +160,6 @@ module.exports = {
         };
       }));
   
-      // Kirim respons
       res.json({
         user: {
           id: user.id,

@@ -1,7 +1,5 @@
 const Review = require('../models/reviewModel');
 const axios = require('axios');
-const Sentiment = require('sentiment');
-const sentiment = new Sentiment();
 const { analyzeSentiment } = require('../helpers/sentimentAnalyzer');
 
 module.exports = {
@@ -315,13 +313,11 @@ module.exports = {
       try {
         const token = req.headers.authorization;
   
-        // Ambil informasi order (biar bisa tampilkan order detail + menu)
         const orderRes = await axios.get(`http://localhost:3003/orders/${orderId}`, {
           headers: { Authorization: token }
         });
         const order = orderRes.data;
   
-        // Ambil info menu dari order.menu_id
         let menu = {};
         try {
           const menuRes = await axios.get(`http://localhost:3002/menus/${order.menu_id}`, {
@@ -332,7 +328,6 @@ module.exports = {
           menu = { id: order.menu_id, name: 'Unknown Menu' };
         }
   
-        // Tambahkan user info ke setiap review
         const reviewsWithUsers = await Promise.all(
           reviews.map(async (review) => {
             let user;

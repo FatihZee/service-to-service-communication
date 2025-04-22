@@ -65,14 +65,12 @@
 
   <!-- Script: Load Navbar + Auth Check + Logout -->
   <script>
-    // Load navbar.html
     fetch("navbar.html")
       .then(res => res.text())
       .then(data => {
         document.getElementById("navbarContainer").innerHTML = data;
       });
 
-    // Check auth
     const token = localStorage.getItem("token");
     if (!token) {
       window.location.href = "index.html";

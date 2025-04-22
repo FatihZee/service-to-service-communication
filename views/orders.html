@@ -102,8 +102,6 @@
         `).join('');
         }
 
-
-
       orderForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const orderId = orderIdInput.value;
@@ -163,7 +161,6 @@
     });
   </script>
   <script>
-    // Load navbar from external file
     fetch('navbar.html')
       .then(res => res.text())
       .then(data => {
