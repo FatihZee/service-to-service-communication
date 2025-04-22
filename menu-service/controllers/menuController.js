@@ -25,12 +25,24 @@ module.exports = {
     });
   },
 
-  getMenuById: (req, res) => {
+  getMenuById: async (req, res) => {
     const id = req.params.id;
-    Menu.getById(id, (err, results) => {
+  
+    Menu.getById(id, async (err, results) => {
       if (err) return res.status(500).json({ error: err });
       if (results.length === 0) return res.status(404).json({ message: 'Menu not found' });
-      res.json(results[0]);
+  
+      const menu = results[0];
+  
+      try {
+        const userRes = await axios.get(`http://localhost:3001/users/${menu.user_id}`);
+        const createdBy = userRes.data;
+  
+        res.json({ ...menu, createdBy });
+      } catch (error) {
+        console.error("Failed to fetch user:", error.message);
+        res.status(500).json({ error: 'Failed to fetch menu creator' });
+      }
     });
   },
 
