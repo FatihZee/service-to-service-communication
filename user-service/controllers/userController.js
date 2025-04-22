@@ -106,50 +106,66 @@ module.exports = {
   getUserWithOrdersAndReviews: async (req, res) => {
     const userId = req.params.id;
     const token = req.headers.authorization;
-
+  
     try {
+      // Ambil data user
       const userRes = await axios.get(`http://localhost:3001/users/${userId}`, {
         headers: { Authorization: token }
       });
-
       const user = userRes.data;
-
+  
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-
+  
+      // Ambil semua order user
       const orderRes = await axios.get(`http://localhost:3003/orders/user/${userId}`, {
         headers: { Authorization: token }
       });
-
       const orders = orderRes.data;
-
-      const ordersWithMenuAndReviews = await Promise.all(orders.map(async (order) => {
-        const menuRes = await axios.get(`http://localhost:3002/menus/${order.menu_id}`, {
-          headers: { Authorization: token }
-        });
-
-        const menu = menuRes.data;
-
-        const reviewsRes = await axios.get(`http://localhost:3004/reviews?menuId=${order.menu_id}`, {
-          headers: { Authorization: token }
-        });
-
-        const reviews = reviewsRes.data;
-
+  
+      // Loop order dan ambil menu + review yang sesuai
+      const ordersWithDetails = await Promise.all(orders.map(async (order) => {
+        // Ambil menu berdasarkan menu_id dari order
+        let menu;
+        try {
+          const menuRes = await axios.get(`http://localhost:3002/menus/${order.menu_id}`, {
+            headers: { Authorization: token }
+          });
+          menu = menuRes.data;
+        } catch (err) {
+          console.error(`Gagal ambil menu ${order.menu_id}:`, err.message);
+          menu = { id: order.menu_id, name: 'Unknown Menu' };
+        }
+  
+        // Ambil review berdasarkan order_id
+        let reviews = [];
+        let reviewCount = 0;
+        try {
+          const reviewsRes = await axios.get(`http://localhost:3004/reviews/order/${order.id}`, {
+            headers: { Authorization: token }
+          });
+          reviews = reviewsRes.data.reviews || [];
+          reviewCount = reviewsRes.data.reviewCount || reviews.length;
+        } catch (err) {
+          console.error(`Gagal ambil review untuk order ${order.id}:`, err.message);
+        }
+  
         return {
           order_id: order.id,
           menu_name: menu.name,
           quantity: order.quantity,
           total_price: order.total_price,
-          reviews: reviews.map(review => ({
-            review_id: review.id,
-            rating: review.rating,
-            comment: review.comment,
+          review_count: reviewCount,
+          reviews: reviews.map(r => ({
+            review_id: r.id,
+            rating: r.rating,
+            comment: r.comment
           }))
         };
       }));
-
+  
+      // Kirim respons
       res.json({
         user: {
           id: user.id,
@@ -157,12 +173,15 @@ module.exports = {
           email: user.email,
           phone: user.phone,
         },
-        orders: ordersWithMenuAndReviews
+        orders: ordersWithDetails
       });
-
+  
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to retrieve user orders and reviews', detail: error.message });
+      console.error('Gagal ambil data user/orders:', error.message);
+      res.status(500).json({
+        error: 'Failed to retrieve user orders and reviews',
+        detail: error.message
+      });
     }
-  }
+  }  
 };

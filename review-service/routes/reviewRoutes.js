@@ -7,6 +7,7 @@ router.get('/', reviewController.getAllReviews);
 router.get('/:id', reviewController.getReviewById);
 router.get('/menu/:menuId', reviewController.getReviewsByMenuId);
 router.get('/user/:userId', reviewController.getReviewsByUserId);
+router.get('/order/:orderId', reviewController.getReviewsByOrderId);
 router.get('/stats/menu/:menuId', reviewController.getReviewStatsByMenuId);
 
 router.post('/', authMiddleware, reviewController.createReview);

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EAI Microservices - Navbar Modern</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .navbar {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      padding: 1rem 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    
+    .navbar-brand i {
+      color: #FFD700;
+      transform: rotate(-10deg);
+      transition: transform 0.3s ease;
+    }
+    
+    .navbar-brand:hover i {
+      transform: rotate(10deg);
+    }
+    
+    .nav-item {
+      margin: 0 2px;
+      position: relative;
+    }
+    
+    .nav-link {
+      border-radius: 6px;
+      padding: 0.6rem 1rem;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    
+    .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .nav-link i {
+      transition: transform 0.3s ease;
+    }
+    
+    .nav-link:hover i {
+      transform: scale(1.2);
+    }
+    
+    .logout-btn {
+      background-color: rgba(255, 193, 7, 0.2);
+      border: 1px solid rgba(255, 193, 7, 0.5);
+      color: #FFD700 !important;
+      border-radius: 6px;
+    }
+    
+    .logout-btn:hover {
+      background-color: rgba(255, 193, 7, 0.3);
+    }
+    
+    @media (max-width: 992px) {
+      .navbar-collapse {
+        background: rgba(30, 60, 114, 0.98);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+      }
+      
+      .nav-item {
+        margin: 4px 0;
+      }
+    }
+    
+    /* Notifikasi Badge */
+    .badge-notify {
+      position: absolute;
+      top: 0;
+      right: 5px;
+      background: #ff5252;
+      border-radius: 50%;
+      font-size: 10px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="dashboard.html">
+      <i class="fas fa-utensils me-2"></i>EAI Microservices
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-expanded="false">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="menus.html">
+            <i class="fas fa-book-open me-1"></i>Menus
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="orders.html">
+            <i class="fas fa-shopping-cart me-1"></i>Orders
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="reviews.html">
+            <i class="fas fa-star me-1"></i>Reviews
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="user-profile.html">
+            <i class="fas fa-user-circle me-1"></i>Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="all-orders.html">
+            <i class="fas fa-list me-1"></i>All Orders
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="all-reviews.html">
+            <i class="fas fa-comments me-1"></i>All Reviews
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="users.html">
+            <i class="fas fa-users me-1"></i>Users
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link logout-btn" href="#" onclick="logout()">
+            <i class="fas fa-sign-out-alt me-1"></i>Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  function logout() {
+    // Implementasi logout
+    alert('Logging out...');
+    // window.location.href = 'login.html';
+  }
+</script>
+
+</body>
+</html>

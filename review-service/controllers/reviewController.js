@@ -305,6 +305,67 @@ module.exports = {
       }
     });
   },
+  
+  getReviewsByOrderId: async (req, res) => {
+    const orderId = req.params.orderId;
+  
+    Review.getByOrderId(orderId, async (err, reviews) => {
+      if (err) return res.status(500).json({ error: err });
+  
+      try {
+        const token = req.headers.authorization;
+  
+        // Ambil informasi order (biar bisa tampilkan order detail + menu)
+        const orderRes = await axios.get(`http://localhost:3003/orders/${orderId}`, {
+          headers: { Authorization: token }
+        });
+        const order = orderRes.data;
+  
+        // Ambil info menu dari order.menu_id
+        let menu = {};
+        try {
+          const menuRes = await axios.get(`http://localhost:3002/menus/${order.menu_id}`, {
+            headers: { Authorization: token }
+          });
+          menu = menuRes.data;
+        } catch {
+          menu = { id: order.menu_id, name: 'Unknown Menu' };
+        }
+  
+        // Tambahkan user info ke setiap review
+        const reviewsWithUsers = await Promise.all(
+          reviews.map(async (review) => {
+            let user;
+            try {
+              const userRes = await axios.get(`http://localhost:3001/users/${review.user_id}`, {
+                headers: { Authorization: token }
+              });
+              user = userRes.data;
+              delete user.password;
+            } catch {
+              user = { id: review.user_id, name: 'Unknown User' };
+            }
+  
+            return { ...review, user };
+          })
+        );
+  
+        res.json({
+          order: {
+            id: order.id,
+            menu,
+            quantity: order.quantity,
+            total_price: order.total_price
+          },
+          reviewCount: reviews.length,
+          reviews: reviewsWithUsers
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch order or review details', detail: error.message });
+      }
+    });
+  },  
 
   getReviewStatsByMenuId: (req, res) => {
     const menuId = req.params.menuId;

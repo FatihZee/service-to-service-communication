@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orders | EAI Microservices</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="navbarContainer"></div>
+
+  <div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3><i class="fas fa-shopping-cart me-2"></i>Your Orders</h3>
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#orderModal">
+        <i class="fas fa-plus me-1"></i>New Order
+      </button>
+    </div>
+
+    <div id="orderList" class="row g-3"></div>
+  </div>
+
+  <!-- Modal: Create/Edit Order -->
+  <div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog">
+      <form class="modal-content" id="orderForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderModalTitle">Create Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="orderId">
+          <div class="mb-3">
+            <label class="form-label">Select Menu</label>
+            <select id="menuSelect" class="form-select" required></select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Quantity</label>
+            <input type="number" id="quantity" class="form-control" value="1" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" type="submit"><i class="fas fa-save me-1"></i>Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!token) return window.location.href = "index.html";
+
+      const orderList = document.getElementById("orderList");
+      const orderForm = document.getElementById("orderForm");
+      const menuSelect = document.getElementById("menuSelect");
+      const orderModalEl = document.getElementById("orderModal");
+      const orderModal = new bootstrap.Modal(orderModalEl);
+      const orderModalTitle = document.getElementById("orderModalTitle");
+      const orderIdInput = document.getElementById("orderId");
+
+      let menuData = [];
+
+      async function loadMenus() {
+        const res = await fetch("http://localhost:3002/menus");
+        menuData = await res.json();
+        menuSelect.innerHTML = menuData.map(menu =>
+          `<option value="${menu.id}">${menu.name} - Rp ${parseInt(menu.price).toLocaleString()}</option>`
+        ).join('');
+      }
+
+      async function loadOrders() {
+        const res = await fetch(`http://localhost:3003/orders/user/${user.id}`);
+        const orders = await res.json();
+
+        orderList.innerHTML = orders.map(order => `
+            <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                <h5 class="card-title">Order #${order.id}</h5>
+                <p><strong>Menu ID:</strong> ${order.menu_id}</p>
+                <p><strong>Quantity:</strong> ${order.quantity}</p>
+                <p><strong>Total:</strong> Rp ${parseInt(order.total_price).toLocaleString()}</p>
+                <p class="text-muted small">Created at: ${new Date(order.created_at).toLocaleString()}</p>
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-sm btn-warning" onclick="editOrder(${order.id}, ${order.menu_id}, ${order.quantity})">
+                    <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteOrder(${order.id})">
+                    <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <a href="order-detail.html?id=${order.id}" class="btn btn-sm btn-info">
+                    <i class="fas fa-info-circle"></i>
+                    </a>
+                </div>
+                </div>
+            </div>
+            </div>
+        `).join('');
+        }
+
+
+
+      orderForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const orderId = orderIdInput.value;
+        const menuId = parseInt(menuSelect.value);
+        const quantity = parseInt(document.getElementById("quantity").value);
+
+        const url = orderId ? `http://localhost:3003/orders/${orderId}` : "http://localhost:3003/orders";
+        const method = orderId ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          },
+          body: JSON.stringify({ menuId, quantity })
+        });
+
+        if (res.ok) {
+          alert(orderId ? "Order updated!" : "Order created!");
+          orderForm.reset();
+          orderModal.hide();
+          loadOrders();
+        } else {
+          alert("Failed to process order.");
+        }
+      });
+
+      window.editOrder = (id, menuId, quantity) => {
+        orderModalTitle.textContent = "Edit Order";
+        orderIdInput.value = id;
+        menuSelect.value = menuId;
+        document.getElementById("quantity").value = quantity;
+        orderModal.show();
+      };
+
+      window.deleteOrder = async (id) => {
+        if (!confirm("Delete this order?")) return;
+        const res = await fetch(`http://localhost:3003/orders/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (res.ok) {
+          loadOrders();
+        } else {
+          alert("Failed to delete.");
+        }
+      };
+
+      window.logout = () => {
+        localStorage.clear();
+        window.location.href = "index.html";
+      };
+
+      loadMenus();
+      loadOrders();
+    });
+  </script>
+  <script>
+    // Load navbar from external file
+    fetch('navbar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('navbarContainer').innerHTML = data;
+      });
+  </script>  
+</body>
+</html>
