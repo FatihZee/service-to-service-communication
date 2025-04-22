@@ -93,13 +93,10 @@
       const menuModal = new bootstrap.Modal(menuModalEl);
 
       async function loadMenus() {
-        // Show loading spinner, hide menu list
         loadingSpinner.style.display = "flex";
         menuList.style.display = "none";
         
         try {
-          // Add a small delay to make the loading effect more noticeable (optional)
-          // Remove this setTimeout if you want the actual loading time only
           await new Promise(resolve => setTimeout(resolve, 800));
           
           const res = await fetch("http://localhost:3002/menus");
@@ -143,9 +140,8 @@
             </div>
           `;
         } finally {
-          // Hide loading spinner, show menu list with correct display property
           loadingSpinner.style.display = "none";
-          menuList.style.display = ""; // Reset to default display (flex for Bootstrap row)
+          menuList.style.display = "";
         }
       }
 
@@ -251,7 +247,6 @@
         window.location.href = "index.html";
       };
 
-      // Start loading the menus when page loads
       loadMenus();
     });
   </script>

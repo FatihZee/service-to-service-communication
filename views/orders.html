@@ -103,19 +103,16 @@
       }
 
       async function loadOrders() {
-        // Show loading spinner, hide order list
         loadingSpinner.style.display = "flex";
         orderList.style.display = "none";
         
         try {
-          // Add a small delay to make the loading effect more noticeable (optional)
           await new Promise(resolve => setTimeout(resolve, 800));
           
           const res = await fetch(`http://localhost:3003/orders/user/${user.id}`);
           const orders = await res.json();
 
           orderList.innerHTML = orders.map(order => {
-            // Find menu details
             const menu = menuData.find(m => m.id === order.menu_id) || { name: "Unknown Menu" };
 
             return `
@@ -150,9 +147,8 @@
             </div>
           `;
         } finally {
-          // Hide loading spinner, show order list with default display
           loadingSpinner.style.display = "none";
-          orderList.style.display = ""; // Reset to default display (flex for Bootstrap row)
+          orderList.style.display = "";
         }
       }
 
@@ -255,7 +251,6 @@
         window.location.href = "index.html";
       };
 
-      // First load all menu data, then load orders
       loadMenus().then(() => loadOrders());
     });
   </script>
