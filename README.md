@@ -81,15 +81,6 @@ Terdapat 4 service utama yang saling berkomunikasi:
 
 ## 🚀 Cara Menjalankan
 
-### 🔹 **Langkah Awal: Clone Repository**
-
-```powershell
-git clone https://github.com/FatihZee/service-to-service-communication.git
-cd service-to-service-communication
-```
-
----
-
 ### 🔹 **Opsi 1: Jalankan Tiap Service Secara Manual**
 
 Masuk ke masing-masing folder service, install dependencies, dan jalankan:
