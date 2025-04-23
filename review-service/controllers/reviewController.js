@@ -1,6 +1,30 @@
 const Review = require('../models/reviewModel');
 const axios = require('axios');
 const { analyzeSentiment } = require('../helpers/sentimentAnalyzer');
+const db = require('../config/db');
+
+const saveAIRecommendationToDb = (reviewId, recommendation) => {
+  return new Promise((resolve, reject) => {
+    const recommendationData = {
+      review_id: reviewId,
+      recommendation: recommendation,
+      created_at: new Date()
+    };
+
+    db.query(
+      'INSERT INTO ai_recommendations SET ?',
+      recommendationData,
+      (err, result) => {
+        if (err) {
+          console.error('Error menyimpan rekomendasi AI:', err);
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
 
 module.exports = {
   getAllReviews: async (req, res) => {
@@ -86,13 +110,13 @@ module.exports = {
       }
     });
   },
-
+  
   createReview: async (req, res) => {
     const { orderId, rating, comment } = req.body;
     const userId = req.user.id;
   
     if (!orderId || !rating) {
-      return res.status(400).json({ error: 'Order ID and rating are required' });
+      return res.status(400).json({ error: 'Order ID dan rating wajib diisi' });
     }
   
     try {
@@ -103,7 +127,7 @@ module.exports = {
       const order = orderRes.data;
   
       if (order.user_id !== userId) {
-        return res.status(403).json({ error: 'You can only review orders that you placed' });
+        return res.status(403).json({ error: 'Anda hanya dapat memberikan review untuk pesanan Anda sendiri' });
       }
   
       if (!order.menu || !order.menu.id) {
@@ -114,6 +138,7 @@ module.exports = {
       }
   
       const menuId = order.menu.id;
+      const menuName = order.menu.name; 
       const originalComment = comment || '';
   
       let sentimentLabel = 'neutral';
@@ -131,18 +156,88 @@ module.exports = {
         created_at: new Date()
       };
   
-      Review.create(reviewData, (err, result) => {
-        if (err) return res.status(500).json({ error: err });
-        res.status(201).json({
-          message: 'Review created successfully',
-          review: {
-            id: result.insertId,
-            ...reviewData
-          }
+      const createReviewPromise = () => {
+        return new Promise((resolve, reject) => {
+          db.query('INSERT INTO reviews SET ?', reviewData, (err, result) => {
+            if (err) reject(err);
+            else resolve({ id: result.insertId, ...reviewData });
+          });
         });
+      };
+  
+      const newReview = await createReviewPromise();
+      
+      let aiRecommendation = null;
+  
+      if (sentimentLabel === 'negative') {
+        try {
+          const aiPrompt = `Buat tanggapan singkat (1 paragraf) untuk review negatif berikut tentang menu ${menuName}: "${originalComment}". Sertakan saran perbaikan yang jelas dan padat.`;
+          
+          const aiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            signal: AbortSignal.timeout(30000),
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer " + process.env.OPENROUTER_API_KEY,
+              "HTTP-Referer": "http://localhost",
+              "X-Title": "Restaurant Review System",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              "model": "microsoft/mai-ds-r1:free",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": aiPrompt
+                }
+              ]
+            })
+          });
+  
+          const aiData = await aiResponse.json();
+          if (aiData && aiData.choices && aiData.choices.length > 0) {
+            aiRecommendation = aiData.choices[0].message.content;
+          } else {
+            console.error("AI tidak memberikan rekomendasi yang valid:", aiData);
+            aiRecommendation = "Kami tidak dapat memberikan rekomendasi saat ini.";
+          }          
+  
+          await saveAIRecommendationToDb(newReview.id, aiRecommendation);
+        } catch (aiError) {
+          console.error("Error saat meminta rekomendasi AI:", aiError);
+          aiRecommendation = {
+            recommendation: "Maaf atas pengalaman yang kurang menyenangkan. Kami akan mengevaluasi kualitas menu ini dan meningkatkan pelayanan kami."
+          };
+        }
+      }
+  
+      res.status(201).json({
+        message: 'Review berhasil dibuat',
+        review: newReview,
+        aiRecommendation
       });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to create review', detail: error.message });
+      console.error(error);
+      res.status(500).json({ error: 'Gagal membuat review', detail: error.message });
+    }
+  },
+  
+  getAIRecommendation: async (req, res) => {
+    const { reviewId } = req.params;
+  
+    try {
+      db.query(
+        'SELECT * FROM ai_recommendations WHERE review_id = ?',
+        [reviewId],
+        (err, results) => {
+          if (err) return res.status(500).json({ error: err });
+          if (results.length === 0) {
+            return res.status(404).json({ error: 'Rekomendasi AI tidak ditemukan' });
+          }
+          res.json(results[0]);
+        }
+      );
+    } catch (error) {
+      res.status(500).json({ error: 'Gagal mengambil rekomendasi AI', detail: error.message });
     }
   },
 

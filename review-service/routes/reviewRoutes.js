@@ -17,4 +17,6 @@ router.delete('/:id', authMiddleware, reviewController.deleteReview);
 router.get('/menus/:menuId/reviews/sentiment/:sentiment', reviewController.getReviewsByMenuIdAndSentiment);
 router.get('/menus/:menuId/sentiment-stats', reviewController.getSentimentStatsByMenuId);
 
+router.get('/ai-recommendation/:reviewId', reviewController.getAIRecommendation);
+
 module.exports = router;
