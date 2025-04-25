@@ -678,37 +678,10 @@
       };
       
       window.viewDetails = function (id) {
-        const menu = allMenus.find(m => m.id === id);
-        if (!menu) return;
-        
-        const categoryName = menu.category.charAt(0).toUpperCase() + menu.category.slice(1);
-        const icon = categoryIcons[menu.category] || categoryIcons.default;
-        
-        document.getElementById("detailModalLabel").innerText = menu.name;
-        document.getElementById("detailModalBody").innerHTML = `
-          <div class="text-center mb-4">
-            <i class="fas ${icon}" style="font-size: 3rem; color: var(--primary-color);"></i>
-          </div>
-          <div class="row mb-3">
-            <div class="col-5 fw-bold">Category:</div>
-            <div class="col-7">${categoryName}</div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-5 fw-bold">Price:</div>
-            <div class="col-7">Rp ${parseInt(menu.price).toLocaleString()}</div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-5 fw-bold">Description:</div>
-            <div class="col-7">${menu.description || 'No description available'}</div>
-          </div>
-          <div class="row">
-            <div class="col-5 fw-bold">Added by:</div>
-            <div class="col-7">${menu.user_id === user.id ? 'You' : 'Another user'}</div>
-          </div>
-        `;
-        
-        detailModal.show();
+        if (!id) return;
+        window.location.href = `menu-detail.html?id=${id}`;
       };
+
 
       window.deleteMenu = async function (id) {
         const confirm = await Swal.fire({
